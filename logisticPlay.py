@@ -1,6 +1,11 @@
 import pandas as pd, numpy as np, matplotlib.pyplot as plt
 import IPython.display as display
 
+''' 
+Full credit to Geoff Boeing whose code I borrowed to form the data frame
+https://geoffboeing.com/2015/03/chaos-theory-logistic-map/
+'''
+
 class Circle:
     def __init__(self, cx, cy, r, colour='black'):
         """Initialize the circle with its centre, (cx,cy) and radius, r.

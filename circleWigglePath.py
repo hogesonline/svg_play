@@ -2,12 +2,12 @@ import math
 import random
 
 
-def find_points(radius, numPoints=12):
+def find_points(radius, num_points = 12):
     ''' Finds 12 (or how many are entered) points on the path of a circle and returns their coords '''
     points = []
     r = radius
-    for index in range(numPoints):
-        points.append((r * math.cos((index * 2 * math.pi) / numPoints), r * math.sin((index * 2 * math.pi) / numPoints)))
+    for index in range(num_points):
+        points.append((r * math.cos((index * 2 * math.pi) / num_points), r * math.sin((index * 2 * math.pi) / num_points)))
     return points
 
 def two_points(m, point, length):
@@ -16,8 +16,8 @@ def two_points(m, point, length):
     if m is None:
         x= px
         x1= px
-        y= py-length
-        y1= py+length
+        y= py - length
+        y1= py + length
     else:    
         x = px + length * math.sqrt(1 / (1 + m ** 2))
         x1 = px - length * math.sqrt(1 / (1 + m ** 2))
@@ -38,13 +38,13 @@ def make_handles(flip_flag, points, length):
     #this function gets passed the points and returns the handles
     handles = []
     for i, point in enumerate(points):
-        x,y = point
+        x, y = point
         #C format past anchor, current anchor, current point
         m = inv_grad(point)
-        a,b = two_points(m, point, length)
+        a, b = two_points(m, point, length)
         if flip_flag:
             #handling an exception I don't understand the maths for, sorry purists
-            if i==9:
+            if i == 9:
                 handles.append((a, b))
             else:
                 handles.append((b, a))
@@ -54,7 +54,7 @@ def make_handles(flip_flag, points, length):
             flip_flag = not flip_flag
     return handles, flip_flag
 
-def wiggle(px,py, length):
+def wiggle(px, py, length):
     #this function adjusts the point given by a small random amount
     #sets to -1 or 1 based on x direction from origin
     x_shift = (px < 0) * -2 + 1
@@ -62,11 +62,11 @@ def wiggle(px,py, length):
     
     px += x_shift * random.random() * (length * 2)
     py += y_shift * random.random() * (length * 2)
-    return px,py
+    return px, py
 
 
 
-def makeWigglyCircles(radius, size, moves, color='#000000'):
+def make_wiggly_circles(radius, size, moves, color='#000000'):
     length = radius/6
     
     #used to get the order of the handles correct
@@ -85,38 +85,38 @@ def makeWigglyCircles(radius, size, moves, color='#000000'):
 
     for move in range(moves):
         for _ in range(moves*2):
-            xTrans = move * random.random() * radius / 10 + move*10
-            yTrans = move * random.random() * random.choice((-1,1)) * radius / 20 
-            p = f'<path transform="translate({xTrans} {yTrans})" class="blk" d="'
+            x_trans = move * random.random() * radius / 10 + move * 10
+            y_trans = move * random.random() * random.choice((-1, 1)) * radius / 20 
+            p = f'<path transform="translate({x_trans} {y_trans})" class="blk" d="'
 
-            firstpoint = points[-1] #need the circle to loop
-            fx,fy = firstpoint
-            fx,fy = wiggle(fx, fy, length)
+            first_point = points[-1] #need the circle to loop
+            fx, fy = first_point
+            fx, fy = wiggle(fx, fy, length)
             p+=f'M {fx} {fy} '
 
-            pastx = fx
-            pasty = fy
+            past_x = fx
+            past_y = fy
 
             #slightly adjust all the points in the circle
 
-            for i,point in enumerate(points[:-1]):
-                px,py = point
+            for i, point in enumerate(points[:-1]):
+                px, py = point
                 handle1 = handles[i-1][1]
-                h1x,h1y = handle1
-                h1x,h1y = wiggle(h1x, h1y, length)
+                h1x, h1y = handle1
+                h1x, h1y = wiggle(h1x, h1y, length)
                 handle2 = handles[i][0]
-                h2x,h2y = handle2
-                h2x,h2y = wiggle(h1x, h1y, length)
-                px,py = wiggle(px, py, length)
+                h2x, h2y = handle2
+                h2x, h2y = wiggle(h1x, h1y, length)
+                px, py = wiggle(px, py, length)
                 p+=f'C {h1x} {h1y} {h2x} {h2y} {px} {py} '
 
             #last point
-            px,py = fx,fy
+            px, py = fx, fy
             handle1 = handles[-2][1]
-            h1x,h1y = handle1
-            h1x,h1y = wiggle(h1x, h1y, length)
+            h1x, h1y = handle1
+            h1x, h1y = wiggle(h1x, h1y, length)
             handle2 = handles[-1][0]
-            h2x,h2y = handle2
+            h2x, h2y = handle2
             p+=f'C {h1x} {h1y} {h2x} {h2y} {px} {py} '
             #this fixes the stupid spiky join stupid
                 
@@ -129,4 +129,4 @@ def makeWigglyCircles(radius, size, moves, color='#000000'):
 
 
 if __name__ == '__main__':
-    makeWigglyCircles(150, 300, 40, color='rgb(17, 85, 204)')
+    make_wiggly_circles(150, 300, 40, color='rgb(17, 85, 204)')

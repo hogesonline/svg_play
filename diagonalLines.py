@@ -1,7 +1,7 @@
 #rewrite to make it all built out of diagonal lines.
 import random
 
-def drawLine(x, y, length, pos, size, sections, topLeftX, topLeftY, sw, sym=False, color='black'):
+def draw_line(x, y, length, pos, size, sections, top_left_x, top_left_y, sw, sym=False, color='black'):
     '''returns the svg xml for the line
     Params:
     x - starting x value
@@ -16,7 +16,7 @@ def drawLine(x, y, length, pos, size, sections, topLeftX, topLeftY, sw, sym=Fals
     color of the stroke
     '''
     if sym:
-        length = -length
+        length = - length
     x2 = x + length
     if pos:
         y2 = y - length
@@ -37,19 +37,18 @@ def drawLine(x, y, length, pos, size, sections, topLeftX, topLeftY, sw, sym=Fals
         y2 = temp
 
     #depending on all the above conditions output the format for the line
-    return f'<line x1="{topLeftX + x * size}" y1="{topLeftY + y * size}" x2="{topLeftX + x2 * size}" y2="{topLeftY + y2 * size}" stroke-linecap="square" stroke-width="{sw}" stroke="{color}" />'
-    #return f'<line x1="{x * size + topLeftX}" y1="{y * size + topLeftY}" x2="{x2 * size + topLeftX}" y2="{y2 * size + topLeftY}" stroke-linecap="square" stroke-width="{sw}" stroke="{color}" />'
+    return f'<line x1="{top_left_x + x * size}" y1="{top_left_y + y * size}" x2="{top_left_x + x2 * size}" y2="{top_left_y + y2 * size}" stroke-linecap="square" stroke-width="{sw}" stroke="{color}" />'
+    #return f'<line x1="{x * size + top_left_x}" y1="{y * size + top_left_y}" x2="{x2 * size + top_left_x}" y2="{y2 * size + top_left_y}" stroke-linecap="square" stroke-width="{sw}" stroke="{color}" />'
 
-
-def createLines(sections):
+def create_lines(sections):
     #Make lines (not actually unique) in the bottom right diagonal half
     #of the bottom quadrant and then repeats in all the places 
-    numLines = random.randint(sections // 2, int(sections * 1.5))
-    pointSet = set()
+    num_lines = random.randint(sections // 2, int(sections * 1.5))
+    point_set = set()
     lines = []
     neg = True
     #repeats ignoring duplicate points
-    while len(lines) < numLines:
+    while len(lines) < num_lines:
         #get a random even number for x adn y
         x = random.randint(0, sections // 2 - 1) * 2
         y = random.randint(0, x // 2) * 2
@@ -61,21 +60,21 @@ def createLines(sections):
         #alternate the positivity of the gradient depending on starting point
         pos = (x in (2, 4)and y in (2, 4))
 
-        if (x, y) not in pointSet:
+        if (x, y) not in point_set:
             lines.append((x, y, length, pos))
-            pointSet.add((x, y))
+            point_set.add((x, y))
     return lines
 
-def makeTiles(size, tiles ,imageSize, sw=1):
+def make_tiles(size, tiles ,image_size, sw=1):
     #takes number of sections in each quadrant (indicates intricacy)
     #tiles is the number of repetitions across and down
     #imagesize is number of pixels across and down but it also affects
     #the relative stroke width --> sw is stroke width
-    imagePad = 50
-    header = f'<svg viewBox="-{imagePad} -{imagePad} {imageSize + 2 * imagePad} {imageSize + 2 * imagePad}" xmlns="http://www.w3.org/2000/svg">\n'
+    image_pad = 50
+    header = f'<svg viewBox="-{image_pad} -{image_pad} {image_size + 2 * image_pad} {image_size + 2 * image_pad}" xmlns="http://www.w3.org/2000/svg">\n'
     print(header)
-    tileSize = imageSize / tiles
-    padding = imageSize / tiles / 2
+    tile_size = image_size / tiles
+    padding = image_size / tiles / 2
     padding = 40
     sections = size
     for row in range(tiles):
@@ -84,34 +83,34 @@ def makeTiles(size, tiles ,imageSize, sw=1):
 
             #make a tile quadrant group (without <g> wrapping just yet)
             group = ''
-            topLeftX = column * tileSize + padding / 2
-            topLeftY = row * tileSize + padding / 2
-            #print(topLeftX, topLeftY)
-            squareSize = ((tileSize - padding) / size) / 2
-            lines= createLines(sections)
+            top_left_x = column * tile_size + padding / 2
+            top_left_y = row * tile_size + padding / 2
+            #print(top_left_x, top_left_y)
+            square_size = ((tile_size - padding) / size) / 2
+            lines= create_lines(sections)
             for line in lines:
                 #do the same thing (ish) in the four different quadrants
-                x,y,length,pos = line
+                x, y, length, pos = line
                 x1 = x
                 y1 = y
                 
                 #print(x1,y1,length,pos,a,b)
-                l = drawLine(x1, y1, length, pos, squareSize, sections, topLeftX, topLeftY, sw)
-                group+=l +'\n'
-                #x, y, length, pos, size, sections, topLeftX, topLeftY, sw, sym=False, color='black'
+                l = draw_line(x1, y1, length, pos, square_size, sections, top_left_x, top_left_y, sw)
+                group += l +'\n'
+                #x, y, length, pos, size, sections, top_left_x, top_left_y, sw, sym=False, color='black'
                 if x != y or pos:
                     x1 = y
                     y1 = x
-                    l2 = drawLine(x1, y1, -length, pos, squareSize, sections, topLeftX, topLeftY, sw, sym = True)
-                    #x, y, length, pos, size, sections, topLeftX, topLeftY, sw, sym=False, color='black'
-                    group+=l2 +'\n'
+                    l2 = draw_line(x1, y1, -length, pos, square_size, sections, top_left_x, top_left_y, sw, sym = True)
+                    #x, y, length, pos, size, sections, top_left_x, top_left_y, sw, sym=False, color='black'
+                    group += l2 +'\n'
                     
             #repeat this quadrant 3 more times
             for quad in range(4):
                 #convert quad to binary for positioning
                 rotation = quad * 90
-                rotationX = topLeftX + (tileSize - padding) / 2
-                rotationY = topLeftY + (tileSize - padding) / 2
+                rotationX = top_left_x + (tile_size - padding) / 2
+                rotationY = top_left_y + (tile_size - padding) / 2
                 print(f'<g transform="rotate({rotation} {rotationX} {rotationY})">{group}</g>')
 
 
@@ -121,6 +120,6 @@ def makeTiles(size, tiles ,imageSize, sw=1):
     
 if __name__ == "__main__":
     #main(7,15,1500)
-    makeTiles(10, 10 ,1000, sw=2)
+    make_tiles(10, 10 ,1000, sw=2)
 
         
