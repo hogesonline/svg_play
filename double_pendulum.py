@@ -45,7 +45,7 @@ print(header)
 #make some lines
 
 
-for _ in range(4):
+for i in range(4):
     #increment accelerations (funky formula time)
     num1 = -g * (2 * m1 + m2) * math.sin(a1)
     num2 = -m2 * g * math.sin(a1-2*a2)
@@ -65,13 +65,13 @@ for _ in range(4):
     x1 = r1 * math.sin(a1)
     y1 = r1 * math.cos(a1)
     print(draw_line(0, 0, x1, y1))
-    print(draw_circle(x1, y1, m1))
+    print(draw_circle(x1, y1, m1, color=f'hsl({i*10},100, 50% )'))
     #second pendulum
     x2 = x1 + r2 * math.sin(a2)
     y2 = y1 + r2 * math.cos(a2)
     #draw the second pendulum
     print(draw_line(x1, y1, x2, y2))
-    print(draw_circle(x2, y2, m2))
+    print(draw_circle(x2, y2, m2, color=f'hsl({i*10},100, 50% )'))
     if previous_x2 != None:
         print(draw_line(previous_x2, previous_y2, x2, y2))
 
