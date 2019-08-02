@@ -48,7 +48,7 @@ def make_quadrilaterals(num, imageSize, colors = ('#044BD9', '#0583F2', '#05AFF2
                             c * quad_size, c * quad_size + quad_size, r * quad_size, 
                             r * quad_size + quad_size, random.choice(colors))
             grid[(r, c)] = q
-##            print(r,c,q.xTL,q.yTL, q.xBR,q.yBR)
+
     #shifting stuff
     for r in range(1, num):
         for c in range(1, num):
@@ -59,7 +59,7 @@ def make_quadrilaterals(num, imageSize, colors = ('#044BD9', '#0583F2', '#05AFF2
             qUp = grid[(r - 1, c)]
             qLeft = grid[(r, c - 1)]
 
-            #update all 4 quads for thesquare I'm working with's top left
+            #update all 4 quads for the square I'm working with's top left
             q.xTL += diffx
             q.yTL += diffy
             qUpLeft.xBR += diffx

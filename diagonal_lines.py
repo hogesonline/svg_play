@@ -107,7 +107,6 @@ def make_tiles(size, tiles ,image_size, sw=1):
                     
             #repeat this quadrant 3 more times
             for quad in range(4):
-                #convert quad to binary for positioning
                 rotation = quad * 90
                 rotationX = top_left_x + (tile_size - padding) / 2
                 rotationY = top_left_y + (tile_size - padding) / 2

@@ -38,7 +38,6 @@ def make_handles(flip_flag, points, length):
     #this function gets passed the points and returns the handles
     handles = []
     for i, point in enumerate(points):
-        x, y = point
         #C format past anchor, current anchor, current point
         m = inv_grad(point)
         a, b = two_points(m, point, length)
@@ -94,9 +93,6 @@ def make_wiggly_circles(radius, size, moves, color='#000000'):
             fx, fy = wiggle(fx, fy, length)
             p+=f'M {fx} {fy} '
 
-            past_x = fx
-            past_y = fy
-
             #slightly adjust all the points in the circle
 
             for i, point in enumerate(points[:-1]):
@@ -108,7 +104,7 @@ def make_wiggly_circles(radius, size, moves, color='#000000'):
                 h2x, h2y = handle2
                 h2x, h2y = wiggle(h1x, h1y, length)
                 px, py = wiggle(px, py, length)
-                p+=f'C {h1x} {h1y} {h2x} {h2y} {px} {py} '
+                p+=f'C {round(h1x,2)} {round(h1y,2)} {round(h2x,2)} {round(h2y,2)} {round(px,2)} {round(py,2)} '
 
             #last point
             px, py = fx, fy
@@ -117,7 +113,7 @@ def make_wiggly_circles(radius, size, moves, color='#000000'):
             h1x, h1y = wiggle(h1x, h1y, length)
             handle2 = handles[-1][0]
             h2x, h2y = handle2
-            p+=f'C {h1x} {h1y} {h2x} {h2y} {px} {py} '
+            p+=f'C {round(h1x,2)} {round(h1y,2)} {round(h2x,2)} {round(h2y,2)} {round(px,2)} {round(py,2)} '
             #this fixes the stupid spiky join stupid
                 
             p+=' Z"/>\n'

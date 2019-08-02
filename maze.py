@@ -2,7 +2,8 @@ import random
 
 def draw_diagonal(x, y, x2, y2, color='black'):
 	#format a line for svg 
-    return f'<line x1="{x}" y1="{y}" x2="{x2}" y2="{y2}" stroke="{color}" />'
+    return f'<line x1="{x}" y1="{y}" x2="{x2}" \
+            y2="{y2}" stroke="{color}" />'
 
 def make_maze(num, color = "black" , height = 500):
 	#num is the number of diagonals across and down

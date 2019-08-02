@@ -22,16 +22,16 @@ class Circle:
         d = np.hypot(cx-self.cx, cy-self.cy)
         return d < r + self.r
 
-    def draw_circle(self, fo):
-        """Write the circle's SVG to the output stream, fo."""
-        for ring in range(self.rings-1):
+    def draw_circle(self):
+        """Write the circle's SVG to the output stream"""
+        for _ in range(self.rings-1):
             num = random.randint(1,self.rings)
             gap = self.r/(self.rings+1)
             rad = gap*num
             sw = random.choice([1,1,1,2,2,3])
-            print(f'<circle cx="{self.cx}" cy="{self.cy}" r="{rad}" stroke-width="{sw}" class="c{self.icolour}"/>', file=fo)            
+            print(f'<circle cx="{self.cx}" cy="{self.cy}" r="{rad}" stroke-width="{sw}" class="c{self.icolour}"/>')            
         sw = random.choice([1,1,1,2,2,3])
-        print(f'<circle cx="{self.cx}" cy="{self.cy}" r="{self.r}" stroke-width="{sw}" class="c{self.icolour}"/>', file=fo)
+        print(f'<circle cx="{self.cx}" cy="{self.cy}" r="{self.r}" stroke-width="{sw}" class="c{self.icolour}"/>')
 
 class Circles:
     """A class for drawing circles-inside-a-circle."""
@@ -61,11 +61,8 @@ class Circles:
     def preamble(self):
         """The usual SVG preamble, including the image size."""
 
-        print('<?xml version="1.0" encoding="utf-8"?>\n'
-
-        '<svg xmlns="http://www.w3.org/2000/svg"\n' + ' '*5 +
-          'xmlns:xlink="http://www.w3.org/1999/xlink" width="{}" height="{}" >'
-                .format(self.width, self.height), file=self.fo)
+        print('<?xml version="1.0" encoding="utf-8"?>\n\n'
+        f'<svg xmlns="http://www.w3.org/2000/svg"\n xmlns:xlink="http://www.w3.org/1999/xlink" width="{self.width}" height="{self.height}" >')
 
     def defs_decorator(func):
         """For convenience, wrap the CSS styles with the needed SVG tags."""
@@ -73,32 +70,30 @@ class Circles:
         def wrapper(self):
             print("""
             <defs>
-            <style type="text/css"><![CDATA[""", file=self.fo)
+            <style type="text/css"><![CDATA[""")
 
             func(self)
 
             print("""]]></style>
-            </defs>""", file=self.fo)
+            </defs>""")
         return wrapper
 
     @defs_decorator
     def svg_styles(self):
         """Set the SVG styles: circles are coloured with no border."""
 
-        print('circle {stroke: black;}', file=self.fo)
+        print('circle {stroke: black;}')
         for i, c in enumerate(self.colours):
-            print(f'.c{i} {{fill: {c}; }}', file=self.fo)
+            print(f'.c{i} {{fill: {c}; }}')
 
-    def make_svg(self, filename, *args, **kwargs):
+    def make_svg(self, *args, **kwargs):
         """Create the image as an SVG file with name filename."""
 
-        ncolours = len(self.colours)
-        with open(filename, 'w') as self.fo:
-            self.preamble()
-            self.svg_styles()
-            for circle in self.circles:
-                circle.draw_circle(self.fo)
-            print('</svg>', file=self.fo)
+        self.preamble()
+        self.svg_styles()
+        for circle in self.circles:
+            circle.draw_circle()
+        print('</svg>')
 
     def _place_circle(self, r):
         # The guard number: if we don't place a circle within this number
@@ -138,4 +133,4 @@ class Circles:
 
 circles = Circles(n=2000)
 circles.make_circles()
-circles.make_svg('circles.svg')
+circles.make_svg()

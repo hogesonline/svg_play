@@ -11,10 +11,10 @@ r1 = 100
 r2 = 100
 #masses
 m1 = 5
-m2 = 5
+m2 = 10
 #angles
-a1 = math.pi/4
-a2 = math.pi/8
+a1 = math.pi/2
+a2 = math.pi/4
 #velocities
 a1_v = 0
 a2_v = 0
@@ -31,21 +31,43 @@ previous_y2 = None
 #draw a quarter of a square (symmetry coming)
 HEIGHT = 600
 WIDTH = 600
-header = f'<svg viewBox="-300 -300 {WIDTH} {HEIGHT}" xmlns="http://www.w3.org/2000/svg">\n'
+header = f'<svg viewBox="-300 -300 {WIDTH} {HEIGHT}" xmlns="http://www.w3.org/2000/svg" style="background-color: #000;">\n'
+
+style = f'''<g>
+        <defs>
+			<filter id="glow">
+				<fegaussianblur class="blur" result="coloredBlur" stddeviation="4"></fegaussianblur>
+				<femerge>
+					<femergenode in="coloredBlur"></femergenode>
+                    <femergenode in="coloredBlur"></femergenode>
+                    <femergenode in="coloredBlur"></femergenode>
+					<femergenode in="SourceGraphic"></femergenode>
+				</femerge>
+			</filter>
+		</defs>
+        '''
+
 
 
 def draw_circle(cx, cy, rad, color='black'):
     return f'<circle cx="{cx}" cy="{cy}" r="{rad}" fill="{color}" stroke-width="0"/>'
 
 def draw_line(x_start, y_start, x_end, y_end, color='black'):
-    return f'<line x1="{x_start}" y1="{y_start}" x2="{x_end}" y2="{y_end}" stroke-width="1" stroke="{color}"/>'
+    return f'<line x1="{x_start}" y1="{y_start}" x2="{x_end}" y2="{y_end}" stroke="{color}"/>'
+
+def first_point(x,y):
+	return f'<path d="M {x}, {y} '
+
+def add_point(x,y):
+	return f'L{x}, {y}'
 
 print(header)
+print(style)
 
 #make some lines
+path = ""
 
-
-for i in range(4):
+for i in range(2000):
     #increment accelerations (funky formula time)
     num1 = -g * (2 * m1 + m2) * math.sin(a1)
     num2 = -m2 * g * math.sin(a1-2*a2)
@@ -64,32 +86,36 @@ for i in range(4):
     #first pendulum
     x1 = r1 * math.sin(a1)
     y1 = r1 * math.cos(a1)
-    print(draw_line(0, 0, x1, y1))
-    print(draw_circle(x1, y1, m1, color=f'hsl({i*20},100%, 50% )'))
+    # print(draw_line(0, 0, x1, y1))
+    # print(draw_circle(x1, y1, m1, color=f'hsl({i*20},100%, 50% )'))
     #second pendulum
     x2 = x1 + r2 * math.sin(a2)
     y2 = y1 + r2 * math.cos(a2)
     #draw the second pendulum
-    print(draw_line(x1, y1, x2, y2))
-    print(draw_circle(x2, y2, m2, color=f'hsl({i*20},50%, 50% )'))
-    # if previous_x2 != None:
-    #     print(draw_line(previous_x2, previous_y2, x2, y2, color='red'))
+    # print(draw_line(x1, y1, x2, y2))
+    # print(draw_circle(x2, y2, m2, color=f'hsl({i*20},50%, 50% )'))
+    if previous_x2 == None:
+        path += first_point(x2, y2)
+    else:
+        path += add_point(x2, y2)
+
 
     #increase velocity by accel
     a1_v += a1_a
     a2_v += a2_a
 
     #increase angle
-    a1 = (a1 + a1_v) % 2 * math.pi
-    a2 = (a2 + a2_v) % 2 * math.pi
+    a1 = (a1 + a1_v) 
+    a2 = (a2 + a2_v) 
 
-    # a1 += 0.1
-    # a2 -= 0.12
 
     previous_x2 = x2
     previous_y2 = y2
-
-    print(f'<!-- x1: {x1}, y1: {y1}, a1: {a1}, a2: {a2}, a1_v: {a1_v}, a2_v: {a2_v}-->')
     #print()
-footer = '</svg>'
+#end the path off with style
+path+= '" style="fill-opacity: 0; stroke-width: 2; stroke: green; filter: url(#glow);"'
+
+
+print(path)
+footer = '</g></svg>'
 print(footer)

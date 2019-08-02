@@ -2,155 +2,52 @@
 import random
 
 class Curve:
-    def __init__(self,num,x,y,r,stroke,largeAF=0,sF=0,endX=0,endY=0):
+    def __init__(self,num,x,y,r,stroke,large_a_f=0,small_a_f=0,end_x=0,end_y=0):
         self.stroke = stroke
-        if num == 0:
-            self.circle = True
-            self.cx=x
-            self.cy=y
-            self.r=r
-        else:
-            self.circle = False
-            self.startx=x
-            self.starty=y
-            self.r=r
-            self.largeAF = largeAF
-            self.sF = sF
-            self.endX = endX
-            self.endY = endY
+        self.start_x=x
+        self.start_y=y
+        self.r=r
+        self.large_a_f = large_a_f
+        self.small_a_f = small_a_f
+        self.end_x = end_x
+        self.end_y = end_y
 
-    def getPath(self):
-        if self.circle:
-            return f'<circle cx="{self.cx}" cy="{self.cy}" r="{self.r}" fill="none" stroke="black" stroke-width="{self.stroke}"/>'
-        else:
-            return f'<path d="M {self.startx} {self.starty}A {self.r} {self.r} 0 {self.largeAF} {self.sF} {self.endX} {self.endY}" fill="none" stroke="black" stroke-width="{self.stroke}"/>'
+    def get_path(self):
+        return f'<path d="M {self.start_x} {self.start_y}\
+            A {self.r} {self.r} 0 {self.large_a_f} {self.small_a_f} \
+            {self.end_x} {self.end_y}" fill="none" stroke="black" \
+            stroke-width="{self.stroke}"/>'
            
-        
-
-
 def main(num,imageSize):
     header = f'<svg viewBox="0 0 {imageSize} {imageSize}" xmlns="http://www.w3.org/2000/svg">\n'
     footer = f'</svg>'
     grid = {}
-    cSize = imageSize/num
-    sv = open("genart5.svg","w")
-    sv.write(header)
+    c_size = imageSize/num
+    print(header)
     for r in range(num):
         for c in range(num):
-            n = random.randint(5,8)
+            n = random.randint(0,4)
             s = 4
-            rad = cSize/2
-            if n == 0:
-                #circle
-                cx = c*cSize+cSize/2
-                cy = r*cSize+cSize/2
-                curve = Curve(n,cx,cy,rad,s)
-                print(n,cx,cy,rad,s)
-            else:
-                if n == 1:
-                    #top left arc
-                    x = c*cSize
-                    y = r*cSize+cSize/2
-                    endX=c*cSize+cSize/2
-                    endY=r*cSize
-                    largeAF=0
-                    sF=1
-                elif n==2:
-                    #top right arc
-                    x = c*cSize+cSize/2
-                    y = r*cSize
-                    endX=c*cSize+cSize
-                    endY=r*cSize+cSize/2
-                    largeAF=0
-                    sF=1
-                elif n==3:
-                    #botom right arc
-                    x = c*cSize+cSize/2
-                    y = r*cSize+cSize
-                    endX=c*cSize+cSize
-                    endY=r*cSize+cSize/2
-                    largeAF=0
-                    sF=0
-                elif n==4:
-                    #botom left arc
-                    x = c*cSize
-                    y = r*cSize+cSize/2
-                    endX=c*cSize+cSize/2
-                    endY=r*cSize+cSize
-                    largeAF=0
-                    sF=0
-                if n == 5:
-                    #top left arc
-                    x = c*cSize
-                    y = r*cSize+cSize/2
-                    endX=c*cSize+cSize/2
-                    endY=r*cSize
-                    largeAF=1
-                    sF=0
-                elif n==6:
-                    #top right arc
-                    x = c*cSize+cSize/2
-                    y = r*cSize
-                    endX=c*cSize+cSize
-                    endY=r*cSize+cSize/2
-                    largeAF=1
-                    sF=0
-                elif n==7:
-                    #botom right arc
-                    x = c*cSize+cSize/2
-                    y = r*cSize+cSize
-                    endX=c*cSize+cSize
-                    endY=r*cSize+cSize/2
-                    largeAF=1
-                    sF=1
-                elif n==8:
-                    #botom left arc
-                    x = c*cSize
-                    y = r*cSize+cSize/2
-                    endX=c*cSize+cSize/2
-                    endY=r*cSize+cSize
-                    largeAF=1
-                    sF=1
-                elif n==9:
-                    x = c*cSize
-                    y = r*cSize+cSize/2
-                    endX=c*cSize+cSize
-                    endY=r*cSize+cSize/2
-                    largeAF=1
-                    sF=1
-                elif n==10:
-                    x = c*cSize
-                    y = r*cSize+cSize/2
-                    endX=c*cSize+cSize
-                    endY=r*cSize+cSize/2
-                    largeAF=0
-                    sF=0
-                elif n==11:
-                    x = c*cSize+cSize/2
-                    y = r*cSize
-                    endX=c*cSize+cSize/2
-                    endY=r*cSize+cSize
-                    largeAF=0
-                    sF=0
-                elif n==12:
-                    x = c*cSize+cSize/2
-                    y = r*cSize
-                    endX=c*cSize+cSize/2
-                    endY=r*cSize+cSize
-                    largeAF=1
-                    sF=1
+            rad = c_size/2
+            twos = n//2
+            ones = n%2
+
+            x = c * c_size + (rad * int(twos != ones))
+            y = r * c_size + rad + (rad * twos) - (rad * ones)	
+            end_x=c * c_size + rad + (rad * int(twos != ones))
+            end_y=r * c_size + (rad * int(ones)) + (rad * int(twos))
+            large_a_f = 1
+            small_a_f = 1 * twos
+            
               
-                curve = Curve(n,x,y,rad,s,largeAF,sF,endX,endY)
-                print(n,x,y,rad,s,1,1,endX,endY)
+            curve = Curve(n,x,y,rad,s,large_a_f,small_a_f,end_x,end_y)
             grid[(r,c)] =curve
-            sv.write(curve.getPath())
+            print(curve.get_path())
     
         
-    sv.write(footer)
-    sv.close()
-
+    print(footer)
 
 if __name__ == '__main__':
-    main(4,400)
+    main(10,400)
 
 

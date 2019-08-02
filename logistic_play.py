@@ -7,14 +7,14 @@ https://geoffboeing.com/2015/03/chaos-theory-logistic-map/
 '''
 
 class Circle:
-    def __init__(self, cx, cy, r, colour='black'):
+    def __init__(self, cx, cy, r, color='black'):
         """Initialize the circle with its centre, (cx,cy) and radius, r.
 
         icolour is the index of the circle's colour.
 
         """
         self.cx, self.cy, self.radius = cx, cy, r
-        self.color = colour
+        self.color = color
 
 
 def logistic_model(generations=20, 
@@ -113,17 +113,19 @@ def bifurcation_plot(pops, discard_gens=1, xmin=0, xmax=4, ymin=0, ymax=1, heigh
     return circles
 
 def drawCircle(cx, cy, radius, color):
-    return f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="rgb{color}" stroke-width="0"/>'
+    return f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="{color}" stroke-width="0"/>'
 
-def drawStuff(circles, width, mult):
+def drawStuff(circles, width, mult, color="black"):
     header = f'<svg viewBox="-50 -50 {width} {width}" xmlns="http://www.w3.org/2000/svg">\n'
     print(header)
-    for i,c in enumerate(circles):
-        print(drawCircle(c.cy*mult, c.cx*mult-3*mult, c.radius, c.color))
+    for c in circles:
+        print(drawCircle(c.cy * mult, c.cx * mult - 3 * mult, c.radius, color))
     footer = f'</svg>'
     print(footer)
 
-pops = logistic_model(generations=300, growth_rate_min=2.99, growth_rate_max=4, growth_rate_steps=1000)
-circles = bifurcation_plot(pops, discard_gens=200, xmin=2.8, xmax=4)
-drawStuff(circles, 1000, 1000)
+
+if __name__ == "__main__":
+    pops = logistic_model(generations=300, growth_rate_min=2.99, growth_rate_max=4, growth_rate_steps=1000)
+    circles = bifurcation_plot(pops, discard_gens=200, xmin=2.8, xmax=4)
+    drawStuff(circles, 1000, 1000, color='rgb(0,102,0)')
 

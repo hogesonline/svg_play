@@ -3,39 +3,24 @@ from PIL import Image
 
 class Circle:
     def __init__(self,cx,cy,pixels, topL):
-        '''Attributes:
-            self.topL - top Left
-            self.cx - centre x value
-            self.cy - centre y value
-            self.rad  - radius of the circle
-            self.pixels - this is a PIL image that contains just the pixels relevant to this circle
-            self.avg_col - calls a function to get the average pixel colour for the pixels
-            self.colour - stores the colour of the centre pixel in pixels
-            self.pixelDiff - calls a function that finds the difference between the average colour for the image and the centre colour
-
-        '''
-
         self.topL = topL
         self.cx = cx
         self.cy = cy
         self.rad = pixels.width/2
         self.pixels = pixels
-        self.avg_col = self.getAvgCol()
+        self.avg_col = self.get_avg_col()
         self.colour = pixels.getpixel((pixels.width//2, pixels.height//2))
-        self.pixelDiff = self.getDiff()
+        self.pixelDiff = self.get_diff()
         
         #print(self.colour)
 
-    def getDiff(self):
-        #Gets the difference between 2 colours. 
-        #Does this by finding the difference between red, blue and green values and adding them
+    def get_diff(self):
         r,g,b = self.avg_col
         r1,g1,b1 = self.colour
         
         return abs(r-r1)+abs(g-g1)+abs(b-b1)
 
-    def getAvgCol(self):
-        #finds the average colour for a set of pixels by adding them to 3 different lists and averaging red, green and blue separately
+    def get_avg_col(self):
         red = []
         green = []
         blue = []
@@ -51,14 +36,10 @@ class Circle:
         return sum(red)/len(red),sum(green)/len(green),sum(blue)/len(blue)
 
 
-def drawCircle(cx,cy,radius, colour):
+def draw_circle(cx,cy,radius, colour):
     return f'<circle cx="{cx}" cy="{cy}" r="{radius}" fill="rgb{colour}" stroke-width="0"/>'
 
-def getMax(circles):
-    #find the circle with the largest difference between colour and average colour. It will be the next circle to be split
-    #I think there must be a better way to do this, As the circles get smaller, on things like stripes the difference between
-    #centre pixel and average pixel color gets bigger again
-     
+def get_max(circles):
     maxDiff = None
     index = 0
     temp=[]
@@ -74,49 +55,49 @@ def analysePic(im):
     #this should definitely be recursive
     #biggest circle
     topL = (0,0)
-    cx = im.width//2
-    cy = im.height//2
-    pixels = im.crop((0,0,im.width, im.height))
-    circles = [Circle(cx,cy,pixels,topL)]
+    cx = im.width // 2
+    cy = im.height // 2
+    pixels = im.crop((0, 0, im.width, im.height))
+    circles = [Circle(cx, cy, pixels, topL)]
     #set up the first 4 quadrants
-    radius = im.width//2
+    radius = im.width // 2
     index = 0
     #split the new circle
     newCircle = circles.pop(index)
-    maxDiff = newCircle.pixelDiff
+    newCircle.get_diff()
     #repeat until the radius gets to 5
-    while radius >2:
+    while radius > 2:
         old_topL = newCircle.topL
         topLx, topLy = old_topL
         im = newCircle.pixels
-        radius = im.width//4
+        radius = im.width // 4
         #c1
         topL1 = old_topL
-        cx = im.width//4
-        cy = im.height//4
-        im1 = im.crop((0,0,im.width//2, im.height//2))
-        circles.append(Circle(cx,cy,im1,topL1))
+        cx = im.width // 4
+        cy = im.height // 4
+        im1 = im.crop((0, 0, im.width // 2, im.height // 2))
+        circles.append(Circle(cx, cy, im1, topL1))
         #c2
         #topL2 = old_topL[0]+radius*2,old_topL[1]
-        topL2 = topLx+im.width//2,topLy
-        cx = im.width//4
-        cy = im.height//4
-        im2 = im.crop((im.width//2,0,im.width, im.height//2))
-        circles.append(Circle(cx,cy,im2,topL2))
+        topL2 = topLx + im.width // 2,topLy
+        cx = im.width // 4
+        cy = im.height // 4
+        im2 = im.crop((im.width // 2, 0, im.width, im.height // 2))
+        circles.append(Circle(cx, cy, im2, topL2))
         #c3
         #topL3 = old_topL[0],old_topL[1]+radius*2
-        topL3 = topLx,topLy+im.height//2
-        cx = im.width//4
-        cy = im.height//4
-        im3 = im.crop((0,im.height//2,im.width//2,im.height ))
-        circles.append(Circle(cx,cy,im3,topL3))
+        topL3 = topLx, topLy + im.height // 2
+        cx = im.width // 4
+        cy = im.height // 4
+        im3 = im.crop((0, im.height // 2, im.width // 2, im.height ))
+        circles.append(Circle(cx, cy, im3, topL3))
         #c4
-        topL4 = topLx+im.width//2,topLy+im.height//2
-        cx = im.width//4
-        cy = im.height//4
-        im4 = im.crop((im.width//2,im.height//2,im.width, im.height))
-        circles.append(Circle(cx,cy,im4,topL4))
-        maxDiff, index = getMax(circles)
+        topL4 = topLx + im.width // 2, topLy + im.height // 2
+        cx = im.width // 4
+        cy = im.height // 4
+        im4 = im.crop((im.width // 2, im.height // 2, im.width, im.height))
+        circles.append(Circle(cx, cy, im4, topL4))
+        maxDiff, index = get_max(circles)
         #split the new circle
         newCircle = circles.pop(index)
     #put the final circle back
@@ -132,13 +113,13 @@ def picCircles(image, filename):
     header = f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">\n'
     footer = f'</svg>'
     
-    sv = open(filename+".svg","w")
+    sv = open(filename + ".svg","w")
     sv.write(header)
     circles = analysePic(im)
     
     for circle in circles:
         topLx,topLy = circle.topL
-        sv.write(drawCircle(circle.cx+topLx, circle.cy+topLy, circle.rad, circle.colour))
+        sv.write(draw_circle(circle.cx + topLx, circle.cy + topLy, circle.rad, circle.colour))
     sv.write(footer)
     sv.close
 

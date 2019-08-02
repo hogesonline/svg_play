@@ -37,7 +37,7 @@ def make_tree_circle(width, color):
     for angle in range(0, 360, 10):
 
         #draw_tree(600, 600, angle, 10, (212,100,30))
-        draw_tree(width//2, width//2, angle, 10, color)
+        draw_tree(width // 2, width // 2, angle, 10, color)
     footer = f'</svg>'
     print(footer)
 
