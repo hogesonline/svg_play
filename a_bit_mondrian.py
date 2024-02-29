@@ -3,27 +3,29 @@ import random
 def draw_rect(x, y, width, height, color='black'):
     return f'<rect x="{x}" y="{y}" width="{width}" height="{height}" fill="{color}" stroke-width="0.5" stroke="{color}"/>'
 
-def draw_mondrian(width, height, color_nums, step=10):
+def draw_mondrian(width, height, color_nums, step=10, filename="Mondrian.svg"):
     '''draw_mondrian draws a bunch of squares.
     Params:
       width: Width in pixels
       height: Height in pixels
       colornums: a dictionary built from the analysis of an existing mondrian image. Pixels were analysed to find colour and width of rectangles'''
-    header = f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">\n'
-    print(header)
-    colors = color_nums.keys()
-    for y in range(0, height, step):
-      x = 0
-      while x < width:
-        col = random.choice(colors)
-        numsq = random.choice(color_nums[col])
-        w = step * numsq
-        if x + w >= width:
-            w = width - x
-        print(draw_rect(x, y, w, step, col))
-        x += w
-    footer = f'</svg>'
-    print(footer)
+    with open(filename, 'w') as out:
+      header = f'<svg viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">\n'
+      out.write(header+"\n")
+      colors = list(color_nums.keys())
+      for y in range(0, height, step):
+        x = 0
+        while x < width:
+          col = random.choice(colors)
+          
+          numsq = random.choice(color_nums[col])
+          w = step * numsq
+          if x + w >= width:
+              w = width - x
+          out.write(draw_rect(x, y, w, step, col)+"\n")
+          x += w
+      footer = f'</svg>'
+      out.write(footer+"\n")
 
 if __name__ == '__main__':
     #markov chain like lookup based on mondrian image analysis
